@@ -1,58 +1,79 @@
-🛡️ Rust P2P Encrypted Chat
-Una herramienta de chat terminal-to-terminal descentralizada, asíncrona y cifrada de extremo a extremo (E2EE), escrita en Rust 🦀.
+# 🦀 Rust P2P Encrypted Chat
 
-🚀 Características
-Arquitectura P2P: Sin servidores centrales. Conexión directa TCP.
+> **Chat de terminal a terminal, asíncrono y cifrado de extremo a extremo (E2EE).**
 
-Asíncrono (Non-blocking): Construido sobre Tokio para gestionar I/O de red y teclado simultáneamente sin hilos del SO pesados.
+![Rust](https://img.shields.io/badge/Language-Rust-orange)
+![Async](https://img.shields.io/badge/Async-Tokio-green)
+![Security](https://img.shields.io/badge/Encryption-ChaCha20Poly1305-blue)
 
-Seguridad E2EE:
+Una herramienta de mensajería instantánea descentralizada construida para demostrar el poder de la programación de sistemas moderna con Rust. Combina redes de bajo nivel (TCP), concurrencia asíncrona de alto rendimiento y criptografía moderna.
 
-Cifrado: ChaCha20 (Stream Cipher).
+---
 
-Autenticación: Poly1305 (MAC).
+## 🚀 Características Principales
 
-Gestión de Nonces aleatorios por mensaje para evitar ataques de repetición.
+* **⚡ Arquitectura Asíncrona:** Construido sobre el runtime `Tokio`. Gestiona I/O de red y entrada de teclado simultáneamente sin bloquear hilos del sistema operativo.
+* **🔒 Seguridad E2EE (End-to-End Encryption):**
+    * Algoritmo: **ChaCha20-Poly1305** (Authenticated Encryption).
+    * Cada mensaje utiliza un **Nonce único** de 96-bits para prevenir ataques de repetición.
+    * Ni siquiera los metadatos (como el nombre de usuario) viajan en texto plano.
+* **📡 Protocolo Personalizado:** Mensajería estructurada en JSON binario sobre streams TCP puros.
+* **🤝 P2P Real:** Sin servidores centrales ni bases de datos. Comunicación directa socket-a-socket.
 
-Protocolo: JSON serializado sobre TCP.
+---
 
-🛠️ Instalación y Uso
-Necesitas tener Rust instalado.
+## 🛠️ Instalación
 
-Bash
-git clone https://github.com/TU_USUARIO/p2p_chat.git
-cd p2p_chat
-cargo run --release
-🔐 Cómo iniciar una sesión segura
-El chat requiere que ambas partes compartan una Clave Secreta antes de conectar.
+Asegúrate de tener [Rust & Cargo](https://www.rust-lang.org/) instalados.
 
-Alice (Servidor):
+1. Clona el repositorio:
+   ```bash
+   git clone [https://github.com/TU_USUARIO/p2p_chat.git](https://github.com/TU_USUARIO/p2p_chat.git)
+   cd p2p_chat
 
-Ejecuta el programa.
 
-Selecciona (1) Generar nueva clave.
+## 📖 Guía de Uso
 
-Copia la clave generada y envíasela a Bob por un canal seguro (Signal, en persona, etc.).
+Para que dos personas se comuniquen de forma segura, deben compartir una **Clave Secreta** antes de iniciar la conexión.
 
-Selecciona (1) Server y espera.
+### Paso 1: Generar la Clave (Alice)
+Uno de los dos usuarios debe generar la clave maestra.
 
-Bob (Cliente):
+1.  Ejecuta el programa:
+    ```bash
+    cargo run --release
+    ```
+2.  Selecciona la opción **`(1) Generar NUEVA clave`**.
+3.  Copia la cadena de texto generada (ej: `aW83nKl...==`).
+4.  **Envíale esta clave a Bob** por un canal seguro (Signal, en persona, USB, etc.).
 
-Ejecuta el programa.
+### Paso 2: Iniciar el Servidor (Alice)
+Una vez compartida la clave, Alice se prepara para recibir la conexión:
 
-Selecciona (2) Introducir clave existente.
+1.  El programa te preguntará el modo. Elige **`(1) Server`**.
+2.  El chat mostrará: `Listening on 0.0.0.0:8080...` y esperará.
 
-Pega la clave de Alice.
+### Paso 3: Conectar el Cliente (Bob)
+Bob usa la clave que le dio Alice para conectarse:
 
-Selecciona (2) Client e introduce la IP de Alice (ej: 127.0.0.1:8080 o su IP pública).
+1.  Ejecuta el programa.
+2.  Selecciona la opción **`(2) Introducir clave EXISTENTE`**.
+3.  Pega la clave exacta que generó Alice.
+4.  Elige el modo **`(2) Client`**.
+5.  Introduce la dirección IP de Alice.
+    * Si estáis en la misma red WiFi: Usa la IP local (ej: `192.168.1.XX:8080`).
+    * Si es en el mismo PC: Usa `127.0.0.1:8080`.
 
-¡Chat Seguro! * Todo lo que escriban a partir de ahora viaja encriptado. Si un atacante intercepta los paquetes TCP, solo verá ruido binario aleatorio.
+**¡Listo!** 🎉 Todo lo que escribáis a partir de este momento viaja encriptado y firmado.
 
-🏗️ Stack Tecnológico
-tokio: Runtime asíncrono.
+## 🏗️ Stack Tecnológico
 
-serde / serde_json: Serialización de mensajes.
+Este proyecto utiliza las librerías más robustas del ecosistema Rust:
 
-chacha20poly1305: Implementación pura en Rust del algoritmo de cifrado autenticado (AEAD).
-
-base64: Codificación de transporte.
+| Crate | Uso |
+| :--- | :--- |
+| **`tokio`** | Runtime asíncrono para networking y gestión de tareas (Green threads). |
+| **`chacha20poly1305`** | Implementación pura en Rust del algoritmo de cifrado autenticado (AEAD). |
+| **`serde` / `serde_json`** | Serialización y deserialización eficiente de mensajes estructurados. |
+| **`base64`** | Codificación segura para el transporte de claves y datos cifrados (texto-friendly). |
+| **`anyhow`** | Gestión idiomática y robusta de errores. |
